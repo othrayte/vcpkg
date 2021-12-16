@@ -159,6 +159,15 @@ function(vcpkg_cmake_configure)
         set(ninja_can_be_used OFF)
     endif()
 
+    
+    if (VCPKG_HOST_IS_WINDOWS)
+        if (DEFINED VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET)
+            # Ninja does not support specifying CMAKE_GENERATOR_TOOLSET
+            set(ninja_can_be_used OFF)
+            set(generator_toolset ${VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET})
+        endif()
+    endif()
+
     set(generator)
     if(DEFINED arg_GENERATOR)
         set(generator "${arg_GENERATOR}")
@@ -328,6 +337,10 @@ function(vcpkg_cmake_configure)
 
     if(DEFINED arch)
         list(APPEND arg_OPTIONS "-A${arch}")
+    endif()
+    
+    if(DEFINED generator_toolset)
+        list(APPEND arg_OPTIONS "-T${generator_toolset}")
     endif()
 
     # Sets configuration variables for macOS builds

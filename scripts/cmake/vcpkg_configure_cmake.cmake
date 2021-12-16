@@ -157,6 +157,12 @@ function(vcpkg_configure_cmake)
             # Ninja and MSBuild have many differences when targeting UWP, so use MSBuild to maximize existing compatibility
             set(ninja_can_be_used OFF)
         endif()
+    
+        if (DEFINED VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET)
+            # Ninja does not support specifying CMAKE_GENERATOR_TOOLSET
+            set(ninja_can_be_used OFF)
+            set(generator_toolset ${VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET})
+        endif()
     endif()
 
     set(generator "")
@@ -297,6 +303,10 @@ function(vcpkg_configure_cmake)
 
     if(NOT "${generator_arch}" STREQUAL "")
         vcpkg_list(APPEND arg_OPTIONS "-A${generator_arch}")
+    endif()
+
+    if(NOT "${generator_toolset}" STREQUAL "")
+        vcpkg_list(APPEND arg_OPTIONS "-T${generator_toolset}")
     endif()
 
     # Sets configuration variables for macOS builds
