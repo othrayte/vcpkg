@@ -164,6 +164,15 @@ function(vcpkg_cmake_configure)
         if (DEFINED VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET)
             # Ninja does not support specifying CMAKE_GENERATOR_TOOLSET
             set(ninja_can_be_used OFF)
+            if (DEFINED arg_GENERATOR)
+                message(WARNING "Port requested specific generator, but need to use VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET according to triplet so ignoring ports requested generator.
+        Port requested generator:
+            ${arg_GENERATOR}
+        Ignored because VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET=
+            ${VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET}
+        ")
+                unset(arg_GENERATOR)
+            endif()
             set(generator_toolset ${VCPKG_VISUAL_STUDIO_PLATFORM_TOOLSET})
         endif()
     endif()
